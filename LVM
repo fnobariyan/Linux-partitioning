@@ -55,3 +55,16 @@ lvs
 df -h |grep -i anisa
 
 ------------
+mkdir /Backup
+mkfs -t ext4 /dev/ssd/Backup
+
+vim /etc/fstab
+
+#end of fstap
+/dev/ssd/Backup  /Backup  ext4   defaults   0    0
+Or
+UUID="d2229746-d284-4925-853d-404fb946e233 /Backup  ext4   defaults   0    0
+
+systemctl daemon-reload
+mount -a
+-----------------------------
