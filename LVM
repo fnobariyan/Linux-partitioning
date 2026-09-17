@@ -40,3 +40,18 @@ lsblk
 sdd             8:48   0    6G  0 disk 
 └─sdd1          8:49   0    6G  0 part 
   └─ssd-anisa 253:2    0    5G  0 lvm  /anisa
+--------------
+pvcreate /dev/sde1
+vgs
+vgextend ssd /dev/sde1
+lvs
+lvcreate -L 6g ssd -n Backup
+lvs
+---------------
+
+lvextend -l +100%FREE /dev/ssd/anisa
+resize2fs /dev/ssd/anisa
+lvs
+df -h |grep -i anisa
+
+------------
