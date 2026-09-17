@@ -1,0 +1,42 @@
+
+----------------
+lblsk
+pvs
+fdisk /dev/sdb
+g #Created a new GPT disklabel
+n #New
+t #Selected partition 1 Partition type #30 Linux LVM
+p #Print
+w #Write
+
+fdisk /dev/sdb < txt > /dev/null
+fdisk /dev/sdc < txt > /dev/null
+fdisk /dev/sdd < txt > /dev/null
+fdisk /dev/sde < txt > /dev/null
+-----------------------------
+pvcreate /dev/sd[b-e]1
+
+pvremove /dev/sde1 
+  Labels on physical volume "/dev/sde1" successfully wiped.
+---------------
+vgcreate ssd /dev/sd[b-d]1
+-----------
+mkfs -t ext4 /dev/ssd/anisa
+----------
+
+
+mkdir /anisa
+
+vim /etc/fstab
+
+#end of fstap
+/dev/ssd/anisa  /anisa  ext4   defaults   0    0
+
+systemctl daemon-reload
+mount -a
+
+
+lsblk
+sdd             8:48   0    6G  0 disk 
+└─sdd1          8:49   0    6G  0 part 
+  └─ssd-anisa 253:2    0    5G  0 lvm  /anisa
