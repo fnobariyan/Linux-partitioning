@@ -1,8 +1,8 @@
+#Setup First LVM
+#1-Ceart a script for partitioning 
 
-----------------
-lblsk
-pvs
-fdisk /dev/sdb
+vi txt
+
 g #Created a new GPT disklabel
 n #New
 t #Selected partition 1 Partition type #30 Linux LVM
@@ -14,16 +14,21 @@ fdisk /dev/sdc < txt > /dev/null
 fdisk /dev/sdd < txt > /dev/null
 fdisk /dev/sde < txt > /dev/null
 -----------------------------
+#2-Creat physical valume
+
 pvcreate /dev/sd[b-e]1
 
-pvremove /dev/sde1 
+#pvremove /dev/sde1 
   Labels on physical volume "/dev/sde1" successfully wiped.
----------------
-vgcreate ssd /dev/sd[b-d]1
------------
-mkfs -t ext4 /dev/ssd/anisa
-----------
+-----------------------------
+#4-Create volume Group
 
+vgcreate ssd /dev/sd[b-d]1
+-----------------------------
+#5-format
+mkfs -t ext4 /dev/ssd/anisa
+-----------------------------
+#6-mounting
 
 mkdir /anisa
 
@@ -34,12 +39,23 @@ vim /etc/fstab
 
 systemctl daemon-reload
 mount -a
+-------------------------------
+#For monitoring
 
-
-lsblk
-sdd             8:48   0    6G  0 disk 
-└─sdd1          8:49   0    6G  0 part 
+[root@lvm ~]# lsblk
+sdb             8:16   0    4G  0 disk
+└─sdb1          8:17   0    4G  0 part
   └─ssd-anisa 253:2    0    5G  0 lvm  /anisa
+----
+[root@lvm ~]# pvs
+  PV         VG  Fmt  Attr PSize   PFree
+  /dev/sda2  rl  lvm2 a--  <19.00g     0
+  /dev/sdb1  ssd lvm2 a--   <4.00g     0
+  /dev/sdc1  ssd lvm2 a--   <4.00g  2.99g
+  /dev/sdd1  ssd lvm2 a--   <4.00g <4.00g
+[root@lvm ~]#
+
+
 --------------
 pvcreate /dev/sde1
 vgs
