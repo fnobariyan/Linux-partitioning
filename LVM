@@ -62,7 +62,7 @@ pvcreate /dev/sde1
 vgs
 vgextend ssd /dev/sde1
 lvs
-lvcreate -L 6g ssd -n Backup
+lvcreate -L 5g ssd -n Backup
 lvs
 ---------------
 
