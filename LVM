@@ -57,6 +57,7 @@ sdb             8:16   0    4G  0 disk
 
 
 --------------
+#Resize vg
 pvcreate /dev/sde1
 vgs
 vgextend ssd /dev/sde1
