@@ -56,22 +56,23 @@ sdb             8:16   0    4G  0 disk
 [root@lvm ~]#
 
 
---------------
-#Resize vg
+--------------------------------
+#Growing VG and LV using New Disk
+
+fdisk /dev/sde < text
 pvcreate /dev/sde1
-vgs
 vgextend ssd /dev/sde1
-lvs
-lvcreate -L 5g ssd -n Backup
-lvs
----------------
-
 lvextend -l +100%FREE /dev/ssd/anisa
-resize2fs /dev/ssd/anisa
-lvs
-df -h |grep -i anisa
+resize2fs /dev/ssd/anisa 
 
-------------
+df -khl
+vgs
+pvs
+lvs
+------------------------------
+#Growing LV using other LV (from backup to anisa)
+
+lvcreate -L 5g ssd -n Backup
 mkdir /Backup
 mkfs -t ext4 /dev/ssd/Backup
 
@@ -85,3 +86,30 @@ UUID="d2229746-d284-4925-853d-404fb946e233 /Backup  ext4   defaults   0    0
 systemctl daemon-reload
 mount -a
 -----------------------------
+umount /Backup
+e2fsck -f /dev/ssd/Backup
+resize2fs -p /dev/ssd/Backup 3G
+lvreduce -L -3G /dev/ssd/Backup
+mount -a
+lvextend -L +2g /dev/ssd/anisa or lvextend -l +100%FREE /dev/ssd/anisa
+resize2fs /dev/ssd/anisa
+
+[root@lvm ~]# lvs
+  LV     VG  Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  root   rl  -wi-ao---- <17.00g
+  swap   rl  -wi-ao----   2.00g
+  Backup ssd -wi-ao----   3.00g
+  anisa  ssd -wi-ao----  12.98g
+--------------------------------
+#Remove a Disk from LVM: you should have extra hard(sdf1) to move data (from sde1)
+fdisk /dev/sdf 
+vgextend ssd /dev/sdf1
+pvmove /dev/sde1
+vgreduce ssd /dev/sde1
+pvremove /dev/sde1
+
+lsblk
+
+
+
+
