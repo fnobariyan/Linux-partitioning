@@ -1,6 +1,39 @@
-#checking kernel version
-uname -r
-5.14.0-162.6.1.el9_1.x86_64
+Scenario with 4 hard disk. one of them is spare 
+========================================
 
-#checking raid support
+#Check RAID level that your kernel support
+ uname -r
+5.14.0-162.6.1.el9_1.x86_64
 cat /boot/config-5.14.0-162.6.1.el9_1.x86_64 | grep -i raid
+
+#partioninig
+vi txt
+
+
+
+
+
+fdisk /dev/sde < txt > /dev/null
+fdisk /dev/sdd < txt > /dev/null
+fdisk /dev/sdc < txt > /dev/null
+fdisk /dev/sda < txt > /dev/null
+#Create RAID
+mdadm -C /dev/md0 -l raid5 -n 3 /dev/sd[acd]1
+
+#for monitoring : cat /proc/mdstat ,  mdadm --detail /dev/md0 
+
+#Add Spare Disk
+	mdadm --add /dev/md0 /dev/sde1
+
+#Failed a disk for testing Spare
+	mdadm --fail /dev/md0 /dev/sdd1
+
+#Remove failed disk
+	mdadm --remove /dev/md0 /dev/sdd1
+
+mdadm --add /dev/md0 /dev/sdd1
+
+#Ensure name of RAID doesn’t change after reboot linux
+	mdadm --detail --scan | sudo tee /etc/mdadm.conf
+	sudo dracut --force #Use the dracut command to regenerate the initramfs with the latest configuration
+	systemctl enable mdmonitor --now
