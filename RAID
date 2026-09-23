@@ -1,0 +1,6 @@
+#checking kernel version
+uname -r
+5.14.0-162.6.1.el9_1.x86_64
+
+#checking raid support
+cat /boot/config-5.14.0-162.6.1.el9_1.x86_64 | grep -i raid
