@@ -1,0 +1,75 @@
+# Linux Traditional Partitioning (Without LVM)
+
+## Overview
+
+Traditional partitioning allows us to divide a physical disk into partitions without using Logical Volume Manager (LVM).
+
+## Steps
+
+### 1. Identify Disks
+
+```bash
+lsblk
+fdisk -l
+```
+
+### 2. Create a Partition
+
+fdisk /dev/sdb
+
+#Inside `fdisk`, enter the following commands:
+
+* `n` — Create a new partition
+* `p` — Select a primary partition, if prompted
+* `1` — Set the partition number
+* `Enter` — Accept the default starting sector
+* `Enter` — Accept the default ending sector
+* `w` — Save changes and exit
+
+The new partition will usually be named `/dev/sdb1`.
+
+### 3. Verify the Partition
+
+lsblk
+
+### 4. Create a Filesystem
+
+mkfs.xfs /dev/sdb1
+
+This command creates an XFS filesystem on the partition.
+
+### 5. Create a Mount Point
+
+mkdir /data
+
+### 6. Mount the Partition
+
+mount /dev/sdb1 /data
+
+The partition is now accessible through `/data`.
+
+### 7. Verify the Filesystem and Disk Usage
+
+df -khl
+
+This command displays filesystem types, disk capacity, and used and available space.
+
+## Command Summary
+
+| Command          | Purpose                            |
+| ---------------- | ---------------------------------- |
+| `lsblk`          | List disks and partitions          |
+| `fdisk -l`       | Display disk partition information |
+| `fdisk /dev/sdb` | Create or manage partitions        |
+| `mkfs.xfs`       | Create an XFS filesystem           |
+| `mkdir`          | Create a mount point               |
+| `mount`          | Mount a filesystem                 |
+| `df -hT`         | Display filesystem usage and type  |
+
+## Important Notes
+
+* Replace `/dev/sdb` with the correct disk device.
+* Formatting a partition can destroy existing data.
+* These commands assume that `/dev/sdb` is a new disk and `/dev/sdb1` is the partition you created.
+* A manual mount does not persist after reboot. Configure `/etc/fstab` if automatic mounting is required.
+* Traditional partitioning does not use LVM's Physical Volumes (PV), Volume Groups (VG), or Logical Volumes (LV).
